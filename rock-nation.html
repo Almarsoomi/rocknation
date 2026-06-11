@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock Nation</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0a0a0a;--dark:#111;--mid:#1a1a1a;--card:#1e1e1e;
+  --red:#e63329;--red2:#ff4d44;--gold:#f5a623;
+  --white:#f0ece4;--gray:#888;--lgray:#bbb;
+  --border:#2a2a2a;
+  --font-display:'Bebas Neue',sans-serif;
+  --font-body:'Barlow',sans-serif;
+}
+body{background:var(--black);color:var(--white);font-family:var(--font-body);font-weight:300;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:var(--font-body);border:none;outline:none}
+input,textarea,select{font-family:var(--font-body);background:transparent;color:var(--white);border:1px solid var(--border);padding:10px 14px;border-radius:4px;font-size:14px;width:100%;outline:none;transition:border .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--red)}
+select option{background:#1e1e1e}
+textarea{resize:vertical;min-height:90px}
+label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);display:block;margin-bottom:6px}
+.hidden{display:none!important}
+
+/* ─── NAV ─── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:60px;background:rgba(10,10,10,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:var(--font-display);font-size:28px;letter-spacing:.04em;color:var(--red);display:flex;align-items:center;gap:12px}
+.nav-logo span{color:var(--white)}
+.nav-links{display:flex;gap:4px}
+.nav-links button{background:none;color:var(--lgray);font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:8px 16px;border-radius:3px;transition:all .2s}
+.nav-links button:hover,.nav-links button.active{color:var(--white);background:var(--mid)}
+.nav-right{display:flex;gap:10px}
+.btn{padding:9px 20px;border-radius:3px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;transition:all .2s}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--lgray)}
+.btn-outline:hover{border-color:var(--white);color:var(--white)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:var(--red2)}
+.btn-gold{background:var(--gold);color:#000;font-weight:600}
+.btn-gold:hover{background:#f0b840}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--gray);padding:6px 14px;border-radius:3px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;transition:all .2s}
+.btn-ghost:hover{border-color:var(--lgray);color:var(--lgray)}
+
+/* ─── VIEWS ─── */
+.view{display:none;padding-top:60px;min-height:100vh}
+.view.active{display:block}
+
+/* ─── PUBLIC: HOME ─── */
+.hero{position:relative;height:88vh;display:flex;align-items:flex-end;padding:0 40px 60px;overflow:hidden;background:url('assets/bg.jpg') center/cover no-repeat,linear-gradient(135deg,#0a0a0a 0%,#1a0a0a 50%,#0a0505 100%)}
+.hero-bg{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(230,51,41,.02) 60px,rgba(230,51,41,.02) 61px),repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(230,51,41,.02) 60px,rgba(230,51,41,.02) 61px)}
+.hero-glow{position:absolute;top:-100px;left:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(230,51,41,.12) 0%,transparent 70%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,.06) 0%,transparent 70%);pointer-events:none}
+.hero-content{position:relative;z-index:1;max-width:700px}
+.hero-tag{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.hero-tag::before{content:'';display:inline-block;width:30px;height:1px;background:var(--red)}
+.hero-title{font-family:var(--font-display);font-size:clamp(64px,10vw,120px);line-height:.9;letter-spacing:.02em;margin-bottom:24px}
+.hero-title em{color:var(--red);font-style:normal}
+.hero-sub{font-size:16px;color:var(--lgray);max-width:460px;line-height:1.7;margin-bottom:36px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-stats{position:absolute;right:40px;bottom:60px;text-align:right}
+.stat-num{font-family:var(--font-display);font-size:52px;color:var(--red);line-height:1}
+.stat-lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:20px}
+
+/* Sections */
+.section{padding:80px 40px}
+.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:48px}
+.section-title{font-family:var(--font-display);font-size:48px;letter-spacing:.04em}
+.section-title span{color:var(--red)}
+.section-sub{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gray)}
+
+/* Band cards */
+.bands-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px}
+.band-card{background:var(--card);padding:28px 24px;border-radius:0;position:relative;overflow:hidden;transition:background .2s;cursor:pointer}
+.band-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);transform:scaleY(0);transition:transform .25s;transform-origin:bottom}
+.band-card:hover{background:#232323}
+.band-card:hover::before{transform:scaleY(1)}
+.band-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--red),#8b0000);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:22px;color:#fff;margin-bottom:16px;flex-shrink:0}
+.band-name{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;margin-bottom:4px}
+.band-genre{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.band-city{font-size:13px;color:var(--gray);margin-bottom:12px;display:flex;align-items:center;gap:5px}
+.band-bio{font-size:13px;color:var(--lgray);line-height:1.6;margin-bottom:16px}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border);color:var(--gray);margin-right:5px;margin-bottom:4px}
+
+/* Events */
+.events-list{display:flex;flex-direction:column;gap:2px}
+.event-row{display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:center;background:var(--card);padding:20px 24px;transition:background .2s;cursor:pointer}
+.event-row:hover{background:#232323}
+.event-date-box{text-align:center}
+.event-day{font-family:var(--font-display);font-size:36px;color:var(--red);line-height:1}
+.event-mon{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray)}
+.event-title{font-family:var(--font-display);font-size:20px;letter-spacing:.04em;margin-bottom:4px}
+.event-meta{font-size:13px;color:var(--gray);display:flex;gap:16px;flex-wrap:wrap}
+.event-meta span{display:flex;align-items:center;gap:5px}
+.event-badge{display:inline-block;padding:4px 12px;border-radius:2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.badge-live{background:rgba(230,51,41,.15);color:var(--red);border:1px solid rgba(230,51,41,.3)}
+.badge-soon{background:rgba(245,166,35,.1);color:var(--gold);border:1px solid rgba(245,166,35,.2)}
+.badge-pending{background:rgba(245,166,35,.12);color:var(--gold);border:1px solid rgba(245,166,35,.25)}
+.badge-approved{background:rgba(50,200,100,.1);color:#4cde82;border:1px solid rgba(50,200,100,.2)}
+.badge-rejected{background:rgba(230,51,41,.1);color:#e63329;border:1px solid rgba(230,51,41,.2)}
+.badge-needs{background:rgba(150,100,255,.1);color:#b57bff;border:1px solid rgba(150,100,255,.2)}
+
+/* ─── BAND DASHBOARD ─── */
+.dash-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 60px)}
+.dash-sidebar{background:var(--dark);border-right:1px solid var(--border);padding:32px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.dash-sidebar-logo{padding:0 24px 24px;font-family:var(--font-display);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);border-bottom:1px solid var(--border);margin-bottom:16px}
+.dash-nav-item{display:flex;align-items:center;gap:10px;padding:11px 24px;font-size:14px;color:var(--gray);transition:all .2s;cursor:pointer;letter-spacing:.03em}
+.dash-nav-item:hover{color:var(--white);background:rgba(255,255,255,.04)}
+.dash-nav-item.active{color:var(--white);background:rgba(230,51,41,.1);border-right:2px solid var(--red)}
+.dash-nav-item .icon{font-size:16px;width:20px;text-align:center}
+.dash-main{padding:40px;background:var(--black)}
+.dash-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px}
+.dash-title{font-family:var(--font-display);font-size:40px;letter-spacing:.04em}
+.dash-subtitle{font-size:14px;color:var(--gray);margin-top:4px}
+.dash-panel{display:none}
+.dash-panel.active{display:block}
+
+/* Status banner */
+.status-banner{padding:16px 20px;border-radius:4px;margin-bottom:32px;display:flex;align-items:center;gap:14px;font-size:14px}
+.status-banner.pending{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:var(--gold)}
+.status-banner.approved{background:rgba(50,200,100,.07);border:1px solid rgba(50,200,100,.15);color:#4cde82}
+.status-banner.rejected{background:rgba(230,51,41,.08);border:1px solid rgba(230,51,41,.2);color:var(--red)}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-pending{background:var(--gold)}
+.dot-approved{background:#4cde82}
+.dot-rejected{background:var(--red)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:24px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.card-title{font-family:var(--font-display);font-size:20px;letter-spacing:.04em}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.form-group{margin-bottom:16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px}
+.stat-card-num{font-family:var(--font-display);font-size:42px;color:var(--red);line-height:1;margin-bottom:4px}
+.stat-card-lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray)}
+
+/* Event form */
+.event-item{background:var(--mid);border:1px solid var(--border);border-radius:4px;padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.event-item-date{font-family:var(--font-display);font-size:28px;color:var(--red);min-width:50px;line-height:1}
+.event-item-info{flex:1}
+.event-item-title{font-size:15px;font-weight:600;margin-bottom:3px}
+.event-item-meta{font-size:12px;color:var(--gray)}
+.divider{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+/* ─── ADMIN PANEL ─── */
+.admin-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 60px)}
+.admin-sidebar{background:#0d0d0d;border-right:1px solid var(--border);padding:32px 0}
+.admin-nav-item{display:flex;align-items:center;justify-content:space-between;padding:11px 24px;font-size:14px;color:var(--gray);transition:all .2s;cursor:pointer}
+.admin-nav-item:hover{color:var(--white);background:rgba(255,255,255,.04)}
+.admin-nav-item.active{color:var(--white);background:rgba(230,51,41,.08);border-right:2px solid var(--red)}
+.admin-main{padding:40px;background:#0c0c0c}
+.admin-panel{display:none}
+.admin-panel.active{display:block}
+.count-badge{background:var(--red);color:#fff;font-size:11px;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 6px;font-weight:600}
+.count-badge.gray{background:var(--border);color:var(--gray)}
+
+/* Table */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+td{padding:14px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.action-btns{display:flex;gap:6px}
+.btn-approve{background:rgba(50,200,100,.1);color:#4cde82;border:1px solid rgba(50,200,100,.2);padding:5px 12px;border-radius:3px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:var(--font-body);font-weight:600}
+.btn-approve:hover{background:rgba(50,200,100,.2)}
+.btn-reject{background:rgba(230,51,41,.08);color:var(--red);border:1px solid rgba(230,51,41,.2);padding:5px 12px;border-radius:3px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:var(--font-body);font-weight:600}
+.btn-reject:hover{background:rgba(230,51,41,.15)}
+.btn-edit-req{background:rgba(150,100,255,.08);color:#b57bff;border:1px solid rgba(150,100,255,.2);padding:5px 12px;border-radius:3px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:var(--font-body)}
+.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:36px}
+.admin-stat{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px}
+.admin-stat-num{font-family:var(--font-display);font-size:44px;line-height:1;margin-bottom:4px}
+.admin-stat-lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray)}
+
+/* Modal/overlay */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--mid);border:1px solid var(--border);border-radius:8px;padding:36px;width:90%;max-width:540px;max-height:90vh;overflow-y:auto;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-family:var(--font-display);font-size:28px;letter-spacing:.04em;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--gray);margin-bottom:28px}
+.modal-close{float:right;background:none;border:none;color:var(--gray);font-size:20px;cursor:pointer;margin-top:-4px}
+.modal-close:hover{color:var(--white)}
+
+/* Toast */
+.toast{position:fixed;bottom:32px;right:32px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--red);padding:14px 20px;border-radius:4px;font-size:14px;z-index:999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left-color:#4cde82}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:10px;margin-bottom:36px;flex-wrap:wrap;align-items:center}
+.filter-btn{background:none;border:1px solid var(--border);color:var(--gray);padding:7px 16px;border-radius:20px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:var(--font-body)}
+.filter-btn:hover{border-color:var(--lgray);color:var(--lgray)}
+.filter-btn.active{border-color:var(--red);color:var(--red);background:rgba(230,51,41,.07)}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .4s ease forwards}
+
+/* Breadcrumb */
+.breadcrumb{font-size:12px;color:var(--gray);margin-bottom:8px;letter-spacing:.04em}
+.breadcrumb span{color:var(--lgray)}
+</style>
+</head>
+<body>
+
+<!-- ─── TOAST ─── -->
+<div class="toast" id="toast"></div>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-logo">
+    <img src="assets/logo.png" alt="Rock Nation Logo" style="height:40px;width:auto;">
+    <span>ROCK<span style="color:var(--white)">NATION</span></span>
+  </div>
+  <div class="nav-links">
+    <button class="active" onclick="showView('public')">Discover</button>
+    <button onclick="showView('band-dash')">Band Portal</button>
+    <button onclick="showView('admin')">Admin</button>
+  </div>
+  <div class="nav-right">
+    <button class="btn btn-outline" onclick="openModal('modal-login')">Login</button>
+    <button class="btn btn-red" onclick="openModal('modal-register')">Register Band</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     VIEW 1: PUBLIC DISCOVERY
+══════════════════════════════════════ -->
+<div class="view active" id="view-public">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <div class="hero-content fade-in">
+      <div class="hero-tag">The underground scene</div>
+      <h1 class="hero-title">FIND YOUR<br><em>NEXT</em><br>OBSESSION</h1>
+      <p class="hero-sub">Discover bands, follow the scene, never miss a show. The home of underground rock.</p>
+      <div class="hero-actions">
+        <button class="btn btn-red" onclick="scrollTo({top:document.getElementById('bands-section').offsetTop-60,behavior:'smooth'})">Browse Bands</button>
+        <button class="btn btn-outline" onclick="scrollTo({top:document.getElementById('events-section').offsetTop-60,behavior:'smooth'})">Upcoming Shows</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">48</div><div class="stat-lbl">Active bands</div></div>
+      <div><div class="stat-num">12</div><div class="stat-lbl">Shows this month</div></div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div style="padding:32px 40px 0">
+    <div class="filter-bar">
+      <span style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);margin-right:4px">Genre:</span>
+      <button class="filter-btn active" onclick="filterBands(this,'all')">All</button>
+      <button class="filter-btn" onclick="filterBands(this,'metal')">Metal</button>
+      <button class="filter-btn" onclick="filterBands(this,'punk')">Punk</button>
+      <button class="filter-btn" onclick="filterBands(this,'rock')">Rock</button>
+      <button class="filter-btn" onclick="filterBands(this,'indie')">Indie</button>
+      <button class="filter-btn" onclick="filterBands(this,'doom')">Doom</button>
+    </div>
+  </div>
+
+  <!-- Bands -->
+  <div class="section" id="bands-section" style="padding-top:20px">
+    <div class="section-header">
+      <div class="section-title">FEATURED <span>BANDS</span></div>
+      <div class="section-sub">48 registered bands</div>
+    </div>
+    <div class="bands-grid" id="bands-grid">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <!-- Events -->
+  <div class="section" id="events-section" style="border-top:1px solid var(--border)">
+    <div class="section-header">
+      <div class="section-title">UPCOMING <span>SHOWS</span></div>
+      <div class="section-sub">All approved events</div>
+    </div>
+    <div class="events-list" id="events-list">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:60px;border-top:1px solid var(--border)">
+    <div style="font-family:var(--font-display);font-size:48px;color:var(--red);letter-spacing:.04em;margin-bottom:12px">ROCK NATION</div>
+    <div style="font-size:13px;color:var(--gray);letter-spacing:.08em">© 2025 — The underground lives here</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     VIEW 2: BAND DASHBOARD
+══════════════════════════════════════ -->
+<div class="view" id="view-band-dash">
+  <div class="dash-layout">
+    <div class="dash-sidebar">
+      <div class="dash-sidebar-logo">Band Portal</div>
+      <div class="dash-nav-item active" onclick="showDashPanel('profile',this)"><span class="icon">◈</span> Profile</div>
+      <div class="dash-nav-item" onclick="showDashPanel('events',this)"><span class="icon">◉</span> My Events</div>
+      <div class="dash-nav-item" onclick="showDashPanel('add-event',this)"><span class="icon">＋</span> Add Event</div>
+      <div class="dash-nav-item" onclick="showDashPanel('members',this)"><span class="icon">◎</span> Members</div>
+    </div>
+    <div class="dash-main">
+
+      <!-- Profile Panel -->
+      <div class="dash-panel active" id="dash-profile">
+        <div class="dash-topbar">
+          <div>
+            <div class="dash-title">Band Profile</div>
+            <div class="dash-subtitle">Your public-facing information</div>
+          </div>
+          <button class="btn btn-red btn-sm" onclick="showToast('Profile saved!','success')">Save Changes</button>
+        </div>
+        <div class="status-banner approved">
+          <div class="status-dot dot-approved"></div>
+          <div><strong>Profile Approved</strong> — Your band is live on Rock Nation. You can still update information.</div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><div class="card-title">Band Identity</div></div>
+          <div class="grid-2">
+            <div class="form-group"><label>Band Name</label><input type="text" value="The Asphalt Wolves"></div>
+            <div class="form-group"><label>Genre</label>
+              <select><option>Metal</option><option>Punk</option><option selected>Rock</option><option>Indie</option><option>Doom</option><option>Other</option></select>
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="form-group"><label>City</label><input type="text" value="Dubai"></div>
+            <div class="form-group"><label>Country</label><input type="text" value="UAE"></div>
+            <div class="form-group"><label>Founded</label><input type="text" value="2019"></div>
+          </div>
+          <div class="form-group"><label>Bio</label><textarea>We are a four-piece heavy rock outfit from Dubai. Our sound channels raw energy through distorted guitars and thunderous rhythm. Influenced by classic rock legends and modern underground scenes.</textarea></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Links & Social</div></div>
+          <div class="grid-2">
+            <div class="form-group"><label>Spotify</label><input type="text" placeholder="spotify.com/artist/..."></div>
+            <div class="form-group"><label>YouTube</label><input type="text" placeholder="youtube.com/@..."></div>
+            <div class="form-group"><label>Instagram</label><input type="text" value="@asphalt.wolves"></div>
+            <div class="form-group"><label>Website</label><input type="text" placeholder="yourband.com"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Events Panel -->
+      <div class="dash-panel" id="dash-events">
+        <div class="dash-topbar">
+          <div>
+            <div class="dash-title">My Events</div>
+            <div class="dash-subtitle">All submitted events and their status</div>
+          </div>
+          <button class="btn btn-red btn-sm" onclick="showDashPanel('add-event',document.querySelector('[onclick*=add-event]'))">+ Add Event</button>
+        </div>
+        <div id="dash-events-list">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Add Event Panel -->
+      <div class="dash-panel" id="dash-add-event">
+        <div class="dash-topbar">
+          <div>
+            <div class="dash-title">Add New Event</div>
+            <div class="dash-subtitle">Submit for admin approval — usually reviewed within 24h</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="grid-2">
+            <div class="form-group"><label>Event Title</label><input type="text" placeholder="e.g. Blackout Tour — Dubai"></div>
+            <div class="form-group"><label>Venue Name</label><input type="text" placeholder="e.g. The Fridge Dubai"></div>
+          </div>
+          <div class="grid-3">
+            <div class="form-group"><label>Date</label><input type="date"></div>
+            <div class="form-group"><label>Time</label><input type="time" value="20:00"></div>
+            <div class="form-group"><label>City</label><input type="text" placeholder="Dubai"></div>
+          </div>
+          <div class="form-group"><label>Event Description</label><textarea placeholder="Describe the event, supporting acts, what to expect..."></textarea></div>
+          <div class="grid-2">
+            <div class="form-group"><label>Ticket Price (AED)</label><input type="text" placeholder="e.g. 80 / Free"></div>
+            <div class="form-group"><label>Ticket Link</label><input type="text" placeholder="platinumlist.net/..."></div>
+          </div>
+          <div style="margin-top:8px">
+            <button class="btn btn-red" onclick="submitEvent()">Submit for Approval</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Members Panel -->
+      <div class="dash-panel" id="dash-members">
+        <div class="dash-topbar">
+          <div>
+            <div class="dash-title">Band Members</div>
+            <div class="dash-subtitle">Your lineup</div>
+          </div>
+          <button class="btn btn-ghost btn-sm">+ Add Member</button>
+        </div>
+        <div class="card">
+          <div id="members-list">
+            <div class="event-item" style="margin-bottom:8px">
+              <div class="band-avatar" style="width:44px;height:44px;font-size:16px">KR</div>
+              <div class="event-item-info"><div class="event-item-title">Karim Rashad</div><div class="event-item-meta">Lead Vocals, Rhythm Guitar</div></div>
+              <button class="btn-ghost" style="padding:5px 12px;border-radius:3px;background:none;border:1px solid var(--border);color:var(--gray);font-size:12px;cursor:pointer">Edit</button>
+            </div>
+            <div class="event-item" style="margin-bottom:8px">
+              <div class="band-avatar" style="width:44px;height:44px;font-size:16px;background:linear-gradient(135deg,#8b2222,#c0392b)">DM</div>
+              <div class="event-item-info"><div class="event-item-title">Dana Mikael</div><div class="event-item-meta">Lead Guitar</div></div>
+              <button class="btn-ghost" style="padding:5px 12px;border-radius:3px;background:none;border:1px solid var(--border);color:var(--gray);font-size:12px;cursor:pointer">Edit</button>
+            </div>
+            <div class="event-item" style="margin-bottom:8px">
+              <div class="band-avatar" style="width:44px;height:44px;font-size:16px;background:linear-gradient(135deg,#1a4a2e,#2d6a4f)">YH</div>
+              <div class="event-item-info"><div class="event-item-title">Yousef Hassan</div><div class="event-item-meta">Bass</div></div>
+              <button class="btn-ghost" style="padding:5px 12px;border-radius:3px;background:none;border:1px solid var(--border);color:var(--gray);font-size:12px;cursor:pointer">Edit</button>
+            </div>
+            <div class="event-item">
+              <div class="band-avatar" style="width:44px;height:44px;font-size:16px;background:linear-gradient(135deg,#1a1a4a,#2d2d8b)">LS</div>
+              <div class="event-item-info"><div class="event-item-title">Leila Saad</div><div class="event-item-meta">Drums</div></div>
+              <button class="btn-ghost" style="padding:5px 12px;border-radius:3px;background:none;border:1px solid var(--border);color:var(--gray);font-size:12px;cursor:pointer">Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     VIEW 3: ADMIN PANEL
+══════════════════════════════════════ -->
+<div class="view" id="view-admin">
+  <div class="admin-layout">
+    <div class="admin-sidebar">
+      <div style="padding:0 24px 24px;font-family:var(--font-display);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);border-bottom:1px solid var(--border);margin-bottom:16px">Admin</div>
+      <div class="admin-nav-item active" onclick="showAdminPanel('overview',this)">
+        <span>Overview</span>
+      </div>
+      <div class="admin-nav-item" onclick="showAdminPanel('bands-queue',this)">
+        <span>Band Approvals</span>
+        <span class="count-badge" id="admin-band-count">3</span>
+      </div>
+      <div class="admin-nav-item" onclick="showAdminPanel('events-queue',this)">
+        <span>Event Approvals</span>
+        <span class="count-badge" id="admin-event-count">2</span>
+      </div>
+      <div class="admin-nav-item" onclick="showAdminPanel('all-bands',this)">
+        <span>All Bands</span>
+        <span class="count-badge gray">7</span>
+      </div>
+    </div>
+    <div class="admin-main">
+
+      <!-- Overview -->
+      <div class="admin-panel active" id="admin-overview">
+        <div style="margin-bottom:32px">
+          <div class="dash-title">Dashboard</div>
+          <div class="dash-subtitle" style="margin-top:4px;font-size:14px;color:var(--gray)">Rock Nation admin overview</div>
+        </div>
+        <div class="admin-stats">
+          <div class="admin-stat">
+            <div class="admin-stat-num" style="color:var(--red)" id="stat-total">7</div>
+            <div class="admin-stat-lbl">Total bands</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-num" style="color:#4cde82" id="stat-approved">4</div>
+            <div class="admin-stat-lbl">Approved</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-num" style="color:var(--gold)" id="stat-pending">3</div>
+            <div class="admin-stat-lbl">Pending review</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-num" style="color:#b57bff">5</div>
+            <div class="admin-stat-lbl">Live events</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="table-wrap">
+            <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gray)">Recent Submissions</div>
+            <table>
+              <tr><td><strong style="font-size:13px">The Asphalt Wolves</strong><div style="font-size:11px;color:var(--gray)">Rock · Dubai</div></td><td><span class="event-badge badge-approved">Approved</span></td></tr>
+              <tr><td><strong style="font-size:13px">Sandstorm Ritual</strong><div style="font-size:11px;color:var(--gray)">Metal · Abu Dhabi</div></td><td><span class="event-badge badge-pending">Pending</span></td></tr>
+              <tr><td><strong style="font-size:13px">Mirage Punk</strong><div style="font-size:11px;color:var(--gray)">Punk · Dubai</div></td><td><span class="event-badge badge-pending">Pending</span></td></tr>
+              <tr><td><strong style="font-size:13px">Desert Doom Trio</strong><div style="font-size:11px;color:var(--gray)">Doom · Sharjah</div></td><td><span class="event-badge badge-approved">Approved</span></td></tr>
+            </table>
+          </div>
+          <div class="table-wrap">
+            <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gray)">Pending Events</div>
+            <table>
+              <tr><td><strong style="font-size:13px">Blackout Tour</strong><div style="font-size:11px;color:var(--gray)">Jul 18 · The Fridge</div></td><td><span class="event-badge badge-pending">Review</span></td></tr>
+              <tr><td><strong style="font-size:13px">Desert Noise Fest</strong><div style="font-size:11px;color:var(--gray)">Aug 2 · Warehouse 421</div></td><td><span class="event-badge badge-pending">Review</span></td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bands Queue -->
+      <div class="admin-panel" id="admin-bands-queue">
+        <div style="margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-end">
+          <div><div class="dash-title">Band Approvals</div><div style="font-size:14px;color:var(--gray);margin-top:4px">3 pending review</div></div>
+        </div>
+        <div class="table-wrap">
+          <table id="bands-queue-table">
+            <thead>
+              <tr><th>Band</th><th>Genre</th><th>City</th><th>Submitted</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="bands-queue-body">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Events Queue -->
+      <div class="admin-panel" id="admin-events-queue">
+        <div style="margin-bottom:32px">
+          <div class="dash-title">Event Approvals</div>
+          <div style="font-size:14px;color:var(--gray);margin-top:4px">2 pending review</div>
+        </div>
+        <div class="table-wrap">
+          <table id="events-queue-table">
+            <thead>
+              <tr><th>Event</th><th>Band</th><th>Date</th><th>Venue</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="events-queue-body">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- All Bands -->
+      <div class="admin-panel" id="admin-all-bands">
+        <div style="margin-bottom:32px"><div class="dash-title">All Bands</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Band</th><th>Genre</th><th>City</th><th>Events</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="all-bands-body">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODALS ─── -->
+<div class="modal-bg" id="modal-register">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-register')">✕</button>
+    <div class="modal-title">Register Your Band</div>
+    <div class="modal-sub">Create your profile. Admin will review within 48 hours.</div>
+    <div class="form-group"><label>Band Name</label><input type="text" placeholder="Your band name"></div>
+    <div class="grid-2"><div class="form-group"><label>Genre</label><select><option>Metal</option><option>Punk</option><option>Rock</option><option>Indie</option><option>Doom</option></select></div><div class="form-group"><label>City</label><input type="text" placeholder="Dubai"></div></div>
+    <div class="form-group"><label>Contact Email</label><input type="email" placeholder="band@email.com"></div>
+    <div class="form-group"><label>Password</label><input type="password" placeholder="Create password"></div>
+    <div class="form-group"><label>Bio (optional)</label><textarea placeholder="Tell us about your sound..."></textarea></div>
+    <button class="btn btn-red" style="width:100%;padding:12px;font-size:14px" onclick="submitRegistration()">Submit Registration</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-login">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-login')">✕</button>
+    <div class="modal-title">Welcome Back</div>
+    <div class="modal-sub">Log in to your band dashboard</div>
+    <div class="form-group"><label>Email</label><input type="email" placeholder="band@email.com"></div>
+    <div class="form-group"><label>Password</label><input type="password" placeholder="Password"></div>
+    <button class="btn btn-red" style="width:100%;padding:12px;font-size:14px;margin-top:8px" onclick="loginBand()">Log In</button>
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--gray)">Don't have an account? <a onclick="closeModal('modal-login');openModal('modal-register')" style="color:var(--red);cursor:pointer">Register your band →</a></div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───
+const bands = [
+  {name:'The Asphalt Wolves',genre:'Rock',city:'Dubai',bio:'Heavy rock quartet from Dubai. Raw energy, distorted riffs.',status:'approved',initials:'AW',color:'linear-gradient(135deg,#e63329,#8b0000)'},
+  {name:'Desert Doom Trio',genre:'Doom',city:'Sharjah',bio:'Slow, heavy, hypnotic. Three-piece doom metal from Sharjah.',status:'approved',initials:'DD',color:'linear-gradient(135deg,#3a1a6e,#1a0a3a)'},
+  {name:'Mirage Punk',genre:'Punk',city:'Dubai',bio:'Fast, loud, unapologetic. Punk never died in the desert.',status:'pending',initials:'MP',color:'linear-gradient(135deg,#c0392b,#922b21)'},
+  {name:'Neon Wasteland',genre:'Indie',city:'Abu Dhabi',bio:'Indie rock with synth textures. Dream-like but gritty.',status:'approved',initials:'NW',color:'linear-gradient(135deg,#1a4a6e,#0a2a4e)'},
+  {name:'Sandstorm Ritual',genre:'Metal',city:'Abu Dhabi',bio:'Death metal outfit channeling the fury of desert storms.',status:'pending',initials:'SR',color:'linear-gradient(135deg,#2d4a1a,#1a2a0a)'},
+  {name:'Circuit Breaker',genre:'Punk',city:'Dubai',bio:'Political punk. Short songs, big statements.',status:'approved',initials:'CB',color:'linear-gradient(135deg,#6e1a1a,#4a0a0a)'},
+  {name:'Iron Camel',genre:'Metal',city:'Sharjah',bio:'Traditional heavy metal. NWOBHM worship in the Gulf.',status:'pending',initials:'IC',color:'linear-gradient(135deg,#4a3a1a,#2a1a0a)'},
+];
+
+const events = [
+  {title:'Blackout Tour — Dubai',band:'The Asphalt Wolves',day:'18',month:'JUL',venue:'The Fridge, Dubai',city:'Dubai',genre:'Rock',status:'approved',price:'AED 80'},
+  {title:'Doom Gathering Vol.3',band:'Desert Doom Trio',day:'24',month:'JUL',venue:'XVA Courtyard',city:'Sharjah',genre:'Doom',status:'approved',price:'AED 60'},
+  {title:'Desert Noise Fest',band:'Multiple Bands',day:'02',month:'AUG',venue:'Warehouse 421',city:'Abu Dhabi',genre:'Various',status:'pending',price:'AED 120'},
+  {title:'Neon Wasteland Live',band:'Neon Wasteland',day:'09',month:'AUG',venue:'Blue Bar, Novotel',city:'Abu Dhabi',genre:'Indie',status:'approved',price:'AED 50'},
+  {title:'Punk Not Dead',band:'Mirage Punk',day:'15',month:'AUG',venue:'Stereo Arcade',city:'Dubai',genre:'Punk',status:'pending',price:'Free'},
+];
+
+const bandEvents = [
+  {title:'Blackout Tour — Dubai',day:'18',month:'JUL',venue:'The Fridge, Dubai',status:'approved'},
+  {title:'Summer Crunch Session',day:'05',month:'AUG',venue:'Milk Dubai',status:'needs_edit'},
+  {title:'Rock Nation Showcase',day:'20',month:'SEP',venue:'TBA',status:'pending'},
+];
+
+// ─── RENDER BANDS ───
+function renderBands(filter='all'){
+  const grid = document.getElementById('bands-grid');
+  grid.innerHTML = '';
+  bands.filter(b=>b.status==='approved'&&(filter==='all'||b.genre.toLowerCase()===filter)).forEach(b=>{
+    grid.innerHTML += `<div class="band-card fade-in">
+      <div class="band-avatar" style="background:${b.color}">${b.initials}</div>
+      <div class="band-name">${b.name}</div>
+      <div class="band-genre">${b.genre}</div>
+      <div class="band-city">📍 ${b.city}</div>
+      <div class="band-bio">${b.bio}</div>
+      <span class="tag">${b.genre}</span><span class="tag">${b.city}</span>
+    </div>`;
+  });
+}
+
+function filterBands(btn,genre){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBands(genre);
+}
+
+// ─── RENDER EVENTS ───
+function renderEvents(){
+  const list = document.getElementById('events-list');
+  list.innerHTML = '';
+  events.filter(e=>e.status==='approved').forEach(e=>{
+    list.innerHTML += `<div class="event-row fade-in">
+      <div class="event-date-box"><div class="event-day">${e.day}</div><div class="event-mon">${e.month}</div></div>
+      <div>
+        <div class="event-title">${e.title}</div>
+        <div class="event-meta">
+          <span>🎸 ${e.band}</span>
+          <span>📍 ${e.venue}</span>
+          <span>🎫 ${e.price}</span>
+        </div>
+      </div>
+      <span class="event-badge badge-live">Live</span>
+    </div>`;
+  });
+}
+
+// ─── RENDER DASH EVENTS ───
+function renderDashEvents(){
+  const list = document.getElementById('dash-events-list');
+  if(!list)return;
+  list.innerHTML = '';
+  bandEvents.forEach(e=>{
+    const badge = e.status==='approved'?'badge-approved':e.status==='pending'?'badge-pending':e.status==='rejected'?'badge-rejected':'badge-needs';
+    const label = e.status==='approved'?'Approved':e.status==='pending'?'Pending':e.status==='rejected'?'Rejected':'Needs Edit';
+    list.innerHTML += `<div class="event-item">
+      <div style="text-align:center;min-width:50px"><div style="font-family:var(--font-display);font-size:28px;color:var(--red);line-height:1">${e.day}</div><div style="font-size:11px;letter-spacing:.1em;color:var(--gray)">${e.month}</div></div>
+      <div class="event-item-info"><div class="event-item-title">${e.title}</div><div class="event-item-meta">${e.venue}</div></div>
+      <span class="event-badge ${badge}">${label}</span>
+    </div>`;
+  });
+}
+
+// ─── RENDER ADMIN QUEUES ───
+function renderAdminQueues(){
+  // Bands
+  const bb = document.getElementById('bands-queue-body');
+  if(bb){
+    bb.innerHTML='';
+    bands.filter(b=>b.status==='pending').forEach((b,i)=>{
+      bb.innerHTML+=`<tr>
+        <td><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:${b.color};display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px">${b.initials}</div><div><strong>${b.name}</strong></div></div></td>
+        <td><span class="tag" style="margin:0">${b.genre}</span></td>
+        <td style="color:var(--gray)">${b.city}</td>
+        <td style="color:var(--gray);font-size:12px">2 days ago</td>
+        <td><span class="event-badge badge-pending">Pending</span></td>
+        <td><div class="action-btns">
+          <button class="btn-approve" onclick="approveBand(${i})">Approve</button>
+          <button class="btn-edit-req" onclick="showToast('Edit request sent to band')">Request Edit</button>
+          <button class="btn-reject" onclick="rejectBand(${i})">Reject</button>
+        </div></td>
+      </tr>`;
+    });
+  }
+  // Events
+  const eb = document.getElementById('events-queue-body');
+  if(eb){
+    eb.innerHTML='';
+    events.filter(e=>e.status==='pending').forEach((e,i)=>{
+      eb.innerHTML+=`<tr>
+        <td><strong>${e.title}</strong></td>
+        <td style="color:var(--lgray)">${e.band}</td>
+        <td style="color:var(--gray)">${e.day} ${e.month}</td>
+        <td style="color:var(--gray);font-size:12px">${e.venue}</td>
+        <td><span class="event-badge badge-pending">Pending</span></td>
+        <td><div class="action-btns">
+          <button class="btn-approve" onclick="approveEvent(${i})">Approve</button>
+          <button class="btn-reject" onclick="rejectEvent(${i})">Reject</button>
+        </div></td>
+      </tr>`;
+    });
+  }
+  // All bands
+  const ab = document.getElementById('all-bands-body');
+  if(ab){
+    ab.innerHTML='';
+    bands.forEach(b=>{
+      const badge = b.status==='approved'?'badge-approved':'badge-pending';
+      const label = b.status==='approved'?'Approved':'Pending';
+      ab.innerHTML+=`<tr>
+        <td><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:${b.color};display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px">${b.initials}</div><strong>${b.name}</strong></div></td>
+        <td>${b.genre}</td>
+        <td style="color:var(--gray)">${b.city}</td>
+        <td style="color:var(--gray)">—</td>
+        <td><span class="event-badge ${badge}">${label}</span></td>
+        <td><button class="btn-ghost" style="font-size:11px;padding:4px 10px">View</button></td>
+      </tr>`;
+    });
+  }
+}
+
+// ─── ACTIONS ───
+function approveBand(i){
+  const pending = bands.filter(b=>b.status==='pending');
+  if(pending[i]) pending[i].status='approved';
+  updateCounts();renderAdminQueues();renderBands();
+  showToast('Band approved and now live!','success');
+}
+function rejectBand(i){
+  const pending = bands.filter(b=>b.status==='pending');
+  if(pending[i]) pending[i].status='rejected';
+  updateCounts();renderAdminQueues();
+  showToast('Band registration rejected');
+}
+function approveEvent(i){
+  const pending = events.filter(e=>e.status==='pending');
+  if(pending[i]) pending[i].status='approved';
+  updateCounts();renderAdminQueues();renderEvents();
+  showToast('Event is now live!','success');
+}
+function rejectEvent(i){
+  const pending = events.filter(e=>e.status==='pending');
+  if(pending[i]) pending[i].status='rejected';
+  updateCounts();renderAdminQueues();
+  showToast('Event rejected');
+}
+function updateCounts(){
+  const bp = bands.filter(b=>b.status==='pending').length;
+  const ep = events.filter(e=>e.status==='pending').length;
+  document.getElementById('admin-band-count').textContent=bp;
+  document.getElementById('admin-event-count').textContent=ep;
+  document.getElementById('stat-pending').textContent=bp;
+  document.getElementById('stat-approved').textContent=bands.filter(b=>b.status==='approved').length;
+  document.getElementById('stat-total').textContent=bands.length;
+}
+
+// ─── NAVIGATION ───
+function showView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+  const map={'public':0,'band-dash':1,'admin':2};
+  document.querySelectorAll('.nav-links button')[map[v]].classList.add('active');
+  if(v==='admin')renderAdminQueues();
+  if(v==='band-dash')renderDashEvents();
+  window.scrollTo(0,0);
+}
+function showDashPanel(p,el){
+  document.querySelectorAll('.dash-panel').forEach(e=>e.classList.remove('active'));
+  document.getElementById('dash-'+p).classList.add('active');
+  document.querySelectorAll('.dash-nav-item').forEach(e=>e.classList.remove('active'));
+  if(el)el.classList.add('active');
+}
+function showAdminPanel(p,el){
+  document.querySelectorAll('.admin-panel').forEach(e=>e.classList.remove('active'));
+  document.getElementById('admin-'+p).classList.add('active');
+  document.querySelectorAll('.admin-nav-item').forEach(e=>e.classList.remove('active'));
+  if(el)el.classList.add('active');
+}
+
+// ─── MODALS ───
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+
+// ─── TOAST ───
+let toastTimer;
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(type?' '+type:'');
+  clearTimeout(toastTimer);
+  requestAnimationFrame(()=>{
+    t.classList.add('show');
+    toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+  });
+}
+
+// ─── FORM ACTIONS ───
+function submitRegistration(){
+  closeModal('modal-register');
+  showToast('Registration submitted! We\'ll review within 48h.');
+}
+function loginBand(){
+  closeModal('modal-login');
+  showView('band-dash');
+  showToast('Welcome back, The Asphalt Wolves!','success');
+}
+function submitEvent(){
+  showToast('Event submitted for approval!','success');
+  showDashPanel('events',document.querySelectorAll('.dash-nav-item')[1]);
+  renderDashEvents();
+}
+
+// ─── INIT ───
+renderBands();
+renderEvents();
+renderDashEvents();
+renderAdminQueues();
+</script>
+</body>
+</html>
